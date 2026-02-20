@@ -9,7 +9,6 @@ const products = [
 ];
 
 function App() {
-  const [count, setCount] = useState(0)
   const [addedProducts, setAddedProducts] = useState([])
 
 
@@ -29,6 +28,20 @@ function App() {
     addedProducts.filter((item) => item.name !== productName)
   )
 }
+  const updateProductQuantity = (productName, newQuantity) => {
+  const parsed = parseInt(newQuantity, 10)
+  const safeQuantity = Math.max(1, Number.isNaN(parsed) ? 1 : parsed)
+
+  setAddedProducts(
+    addedProducts.map((item) =>
+      item.name === productName
+        ? { ...item, quantity: safeQuantity }
+        : item
+    )
+  )
+
+    
+  }
   const total = addedProducts.reduce((acc, item) => acc + item.price * item.quantity, 0)
   return (
     <>
@@ -43,7 +56,15 @@ function App() {
         <h2>Carrello</h2>
         <ul>
           {addedProducts.map((item) =>
-           (<li key= {item.name}>{item.name}, Numero articoli: <strong>{item.quantity}</strong> € {(item.price * item.quantity).toFixed(2)}<button onClick={() => removeFromCart(item.name)}> Elimina dal Carrello </button></li>))}
+           (<li key= {item.name}>{item.name}, Numero articoli: <input
+              type="number"
+              min="1"
+              value={item.quantity}
+              onChange={(e) =>
+                updateProductQuantity(item.name, e.target.value)
+              }
+            />
+ € {(item.price * item.quantity).toFixed(2)}<button onClick={() => removeFromCart(item.name)}> Elimina dal Carrello </button></li>))}
         </ul>
         <h2>Totale:</h2>
         <p><strong>€{total.toFixed(2)}</strong></p>
